@@ -28,8 +28,8 @@ class LoadingScreen{
   }
 
   void hide(){
-    _controller?.close;
-    _controller = null;
+    _controller?.close(); 
+    _controller = null;  
   }
 
   LoadingScreenController? showOverlay({
@@ -107,6 +107,7 @@ class LoadingScreen{
       close: (){
         textController.close();
         overlay.remove();
+        print('overlay me jaa rha hai');
         return true;
       }, 
       update: (text){
