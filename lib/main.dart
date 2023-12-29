@@ -61,7 +61,7 @@ class MainView extends StatelessWidget {
       body: Column(
         children: [
           Consumer(
-            builder: (context,ref,child){
+            builder: (_,ref,child){
               return TextButton(
               onPressed: () async{
                 await ref.read(authStateProvider.notifier).logOut();
@@ -101,7 +101,6 @@ class LoginView extends ConsumerWidget {
           TextButton(
               onPressed: ()  {
                 ref.read(authStateProvider.notifier).loginWithFacebook();
-                print('signed in with facebook');
                 
               },
               child: const Text('Sign in With Facebook')),
