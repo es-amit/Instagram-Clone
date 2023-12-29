@@ -107,7 +107,6 @@ class LoadingScreen{
       close: (){
         textController.close();
         overlay.remove();
-        print('overlay me jaa rha hai');
         return true;
       }, 
       update: (text){
