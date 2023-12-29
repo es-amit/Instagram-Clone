@@ -1,6 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <queries>
         <provider android:authorities="com.facebook.katana.provider.PlatfromProvider" />
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="fb" />
+        </intent>
     </queries>
     
     <application
