@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:instagram_clone/state/posts/models/post.dart';
 
 class PostThumbnailView extends StatelessWidget {
-
   final Post post;
   final VoidCallback onTapped;
   const PostThumbnailView({

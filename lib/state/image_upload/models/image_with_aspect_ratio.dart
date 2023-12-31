@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 
 @immutable
-class ImageWithAspectRatio{
+class ImageWithAspectRatio {
   final Image image;
   final double aspectRatio;
 
   const ImageWithAspectRatio({
-    required this.image, 
-    required this.aspectRatio
+    required this.image,
+    required this.aspectRatio,
   });
-
-  
-  
 }

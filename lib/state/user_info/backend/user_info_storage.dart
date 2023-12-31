@@ -16,31 +16,37 @@ class UserInfoStorage {
     try {
       // first check if we have this user's info from before
       final userInfo = await FirebaseFirestore.instance
-          .collection(FirebaseCollectionName.users)
-          .where(FirebaseFieldName.userId, isEqualTo: userId)
+          .collection(
+            FirebaseCollectionName.users,
+          )
+          .where(
+            FirebaseFieldName.userId,
+            isEqualTo: userId,
+          )
           .limit(1)
           .get();
 
       if (userInfo.docs.isNotEmpty) {
-        // we already have this user's info
+        // we already have this user's profile, save the new data instead
         await userInfo.docs.first.reference.update({
           FirebaseFieldName.displayName: displayName,
           FirebaseFieldName.email: email ?? '',
         });
         return true;
       }
-      // we don't have this user's infrom from before
-      final payload = UserInfoPlayload(
-          userId: userId, displayName: displayName, email: email);
+
+      final payload = UserInfoPayload(
+        userId: userId,
+        displayName: displayName,
+        email: email,
+      );
       await FirebaseFirestore.instance
           .collection(
             FirebaseCollectionName.users,
           )
           .add(payload);
-
       return true;
-      
-    } catch (e) {
+    } catch (_) {
       return false;
     }
   }

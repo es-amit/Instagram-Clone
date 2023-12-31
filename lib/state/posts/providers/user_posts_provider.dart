@@ -11,40 +11,50 @@ import 'package:instagram_clone/state/posts/models/post.dart';
 import 'package:instagram_clone/state/posts/models/post_key.dart';
 
 final userPostsProvider = StreamProvider.autoDispose<Iterable<Post>>(
-  (ref){
-
-
+  (ref) {
     final userId = ref.watch(userIdProvider);
+
     final controller = StreamController<Iterable<Post>>();
 
-    controller.onListen =(){
+    controller.onListen = () {
       controller.sink.add([]);
     };
 
-    final sub = FirebaseFirestore
-      .instance
-      .collection(FirebaseCollectionName.posts)
-      .orderBy(FirebaseFieldName.createdAt, descending: true)
-      .where(PostKey.userId, isEqualTo:  userId)
-      .snapshots()
-      .listen((snapshot) {
+    final sub = FirebaseFirestore.instance
+        .collection(
+          FirebaseCollectionName.posts,
+        )
+        .orderBy(
+          FirebaseFieldName.createdAt,
+          descending: true,
+        )
+        .where(
+          PostKey.userId,
+          isEqualTo: userId,
+        )
+        .snapshots()
+        .listen(
+      (snapshot) {
         final documents = snapshot.docs;
-        final posts = documents.
-          where((doc) => !doc.metadata.hasPendingWrites,)
-          .map((doc) => Post(
-            postId: doc.id, 
-            json: doc.data())
-          );
+        final posts = documents
+            .where(
+              (doc) => !doc.metadata.hasPendingWrites,
+            )
+            .map(
+              (doc) => Post(
+                postId: doc.id,
+                json: doc.data(),
+              ),
+            );
+        controller.sink.add(posts);
+      },
+    );
 
-      controller.sink.add(posts);
+    ref.onDispose(() {
+      sub.cancel();
+      controller.close();
+    });
 
-      });
-
-      ref.onDispose(() {
-        sub.cancel();
-        controller.close();
-      });
-      return controller.stream;
-
-  }
+    return controller.stream;
+  },
 );
