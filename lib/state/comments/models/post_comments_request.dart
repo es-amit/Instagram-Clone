@@ -14,6 +14,7 @@ class RequestForPostAndComments {
     required this.postId, 
     this.sortByCreatedAt = true, 
     this.dateSorting = DateSorting.newestOnTop, 
+    // ignore: avoid_init_to_null
     this.limit = null
   });
 
