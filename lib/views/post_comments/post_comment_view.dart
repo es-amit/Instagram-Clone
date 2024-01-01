@@ -144,7 +144,7 @@ class PostCommentView extends HookConsumerWidget {
 
     if(isSent){
       controller.clear();
-      dismissKeyboad();
+      dismissKeyboard();
     }
   }
 }
