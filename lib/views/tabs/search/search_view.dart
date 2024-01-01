@@ -10,21 +10,20 @@ import 'package:instagram_clone/views/extensions/dismiss_keyboad.dart';
 
 class SearchView extends HookConsumerWidget {
   const SearchView({super.key});
-
   @override
-  Widget build(BuildContext context,WidgetRef ref) {
-
+  Widget build(BuildContext context, WidgetRef ref) {
     final controller = useTextEditingController();
-
     final searchTerm = useState('');
 
-    useEffect((){
-      controller.addListener(() {
-        searchTerm.value = controller.text;
-      });
-      return () {};
-    },[controller]);
-
+    useEffect(
+      () {
+        controller.addListener(() {
+          searchTerm.value = controller.text;
+        });
+        return () {};
+      },
+      [controller],
+    );
 
     return CustomScrollView(
       slivers: [
@@ -34,23 +33,22 @@ class SearchView extends HookConsumerWidget {
             child: TextField(
               controller: controller,
               textInputAction: TextInputAction.search,
-              decoration:  InputDecoration(
+              decoration: InputDecoration(
                 labelText: Strings.enterYourSearchTermHere,
                 suffixIcon: IconButton(
-                  onPressed: (){
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
                     controller.clear();
                     dismissKeyboard();
-                  }, 
-                  icon: const Icon(Icons.clear)
-                )
+                  },
+                ),
               ),
-              
             ),
           ),
         ),
         SearchGridView(
-          searchTerm: searchTerm.value
-        )
+          searchTerm: searchTerm.value,
+        ),
       ],
     );
   }
