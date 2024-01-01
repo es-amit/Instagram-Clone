@@ -9,7 +9,7 @@
     </queries>
     
     <application
-        android:label="instagram_clone"
+        android:label="Instagram Clone"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

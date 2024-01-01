@@ -40,5 +40,5 @@ Then run the following commands to run your app:
 **Client**: Flutter, Provider, RiverPod, Hooks
     
 ## Feedback
-
-If you have any feedback, please reach out to me at amit.singh.9312687983@gmail.com
+- Check out the app here https://drive.google.com/file/d/1ZKDS6IvBLQOAqMEl2L3ihhMdYzoG5BL5/view?usp=sharing
+- If you have any feedback, please reach out to me at amit.singh.9312687983@gmail.com
