@@ -72,6 +72,7 @@ class _CreateNewPostViewState extends ConsumerState<CreateNewPostView> {
                               userId: userId,
                             );
                     if (isUploaded && mounted) {
+                      // ignore: use_build_context_synchronously
                       Navigator.of(context).pop();
                     }
                   }

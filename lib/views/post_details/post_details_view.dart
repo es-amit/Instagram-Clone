@@ -1,4 +1,4 @@
-
+// ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -25,146 +25,130 @@ import 'package:share_plus/share_plus.dart';
 
 class PostDetailsView extends ConsumerStatefulWidget {
   final Post post;
-  const PostDetailsView({super.key,required this.post});
+  const PostDetailsView({super.key, required this.post});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _PostDetailsViewState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _PostDetailsViewState();
 }
 
 class _PostDetailsViewState extends ConsumerState<PostDetailsView> {
   @override
   Widget build(BuildContext context) {
     final request = RequestForPostAndComments(
-      postId: widget.post.postId,
-      limit: 3,
-      dateSorting: DateSorting.oldestOnTop,
-      sortByCreatedAt: true
-    );
+        postId: widget.post.postId,
+        limit: 3,
+        dateSorting: DateSorting.oldestOnTop,
+        sortByCreatedAt: true);
 
-    final postWithComments = ref.watch(specificPostWithCommentsProvider(request));
+    final postWithComments =
+        ref.watch(specificPostWithCommentsProvider(request));
     // can we delete post
 
-    final canDeletePost = ref.watch(canCurrentUserDeletePostProvider(widget.post));
+    final canDeletePost =
+        ref.watch(canCurrentUserDeletePostProvider(widget.post));
 
     return Scaffold(
       appBar: AppBar(
         title: const Text(Strings.postDetails),
         centerTitle: true,
         actions: [
-          postWithComments.when(
-            data: (postWithComments){
-              return IconButton(
-                onPressed: (){
+          postWithComments.when(data: (postWithComments) {
+            return IconButton(
+                onPressed: () {
                   final url = postWithComments.post.fileUrl;
-                  Share.share(url,
-                    subject: Strings.checkOutThisPost
-                  );
-                }, 
-                icon: const Icon(Icons.share)
-              );
-            }, 
-            error: (error,stackTrace){
-              return const SmallErrorAnimationView();
-            }, 
-            loading: (){
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          ),
+                  Share.share(url, subject: Strings.checkOutThisPost);
+                },
+                icon: const Icon(Icons.share));
+          }, error: (error, stackTrace) {
+            return const SmallErrorAnimationView();
+          }, loading: () {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }),
           // delete button or no delete button if user cannot delete this post
-          if(canDeletePost.value ?? false)
-            IconButton(onPressed: () async{
-              final shouldDeletePost = await const DeleteDialog(
-                titleOfObjectToDelete: Strings.post
-              ).
-              present(context)
-              .then(
-                (shouldDelete) => shouldDelete ?? false);
-              
-              if(shouldDeletePost){
-                await ref.read(deletePostProvider.notifier).deletePost(post: widget.post);
-                if(mounted){
-                  Navigator.of(context).pop();
-                }
-              }
-              
-            }, 
-            icon: const Icon(Icons.delete))
+          if (canDeletePost.value ?? false)
+            IconButton(
+                onPressed: () async {
+                  final shouldDeletePost = await const DeleteDialog(
+                          titleOfObjectToDelete: Strings.post)
+                      .present(context)
+                      .then((shouldDelete) => shouldDelete ?? false);
+
+                  if (shouldDeletePost) {
+                    await ref
+                        .read(deletePostProvider.notifier)
+                        .deletePost(post: widget.post);
+                    if (mounted) {
+                      Navigator.of(context).pop();
+                    }
+                  }
+                },
+                icon: const Icon(Icons.delete))
         ],
       ),
-      body: postWithComments.when(
-        data: (postWithComments){
-          final postId = postWithComments.post.postId;
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                PostImageOrVideoView(
-                  post: postWithComments.post
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    // likebutton if post allow
-                    if(postWithComments.post.allowsLikes)
-                      LikeButton(postId: postId),
-                    
-                    // comment button if post allow
-                    if(postWithComments.post.allowsComments)
-                      IconButton(
-                        onPressed: (){
+      body: postWithComments.when(data: (postWithComments) {
+        final postId = postWithComments.post.postId;
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              PostImageOrVideoView(post: postWithComments.post),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  // likebutton if post allow
+                  if (postWithComments.post.allowsLikes)
+                    LikeButton(postId: postId),
+
+                  // comment button if post allow
+                  if (postWithComments.post.allowsComments)
+                    IconButton(
+                        onPressed: () {
                           Navigator.push(
-                            context, 
-                            MaterialPageRoute(builder: 
-                            ((context) => 
-                              PostCommentView(postId: postId))
-                            )
-                          );
-                        }, 
-                        icon: const Icon(Icons.mode_comment_outlined)
-                      )
-                  ],
+                              context,
+                              MaterialPageRoute(
+                                  builder: ((context) =>
+                                      PostCommentView(postId: postId))));
+                        },
+                        icon: const Icon(Icons.mode_comment_outlined))
+                ],
+              ),
+              // post details show divider at the bottom
+              PostDisplayNameAndMessageView(post: postWithComments.post),
+              PostDateView(dateTime: postWithComments.post.createdAt),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Divider(
+                  color: Colors.white70,
                 ),
-                // post details show divider at the bottom
-                PostDisplayNameAndMessageView(post: postWithComments.post),
-                PostDateView(dateTime: postWithComments.post.createdAt),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Divider(
-                    color: Colors.white70,
-                  ),
+              ),
+              CompactCommentColumn(comments: postWithComments.comments),
 
+              // display like count
+              if (postWithComments.post.allowsLikes)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      LikesCountView(postId: postId),
+                    ],
+                  ),
                 ),
-                CompactCommentColumn(comments: postWithComments.comments),
 
-                // display like count
-                if(postWithComments.post.allowsLikes)
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        LikesCountView(postId: postId),
-                      ],
-                    ),
-                  ),
-
-                  // add spacing to bottom of screen
-                  const SizedBox(
-                    height: 100,
-                  )
-              ],
-            ),
-          );
-
-        }, 
-        error: (error,stackTrace){
-          return const ErrorAnimationView();
-        }, 
-        loading: (){
-          return const LoadingAnimationView();
-        }
-      ),
+              // add spacing to bottom of screen
+              const SizedBox(
+                height: 100,
+              )
+            ],
+          ),
+        );
+      }, error: (error, stackTrace) {
+        return const ErrorAnimationView();
+      }, loading: () {
+        return const LoadingAnimationView();
+      }),
     );
   }
 }

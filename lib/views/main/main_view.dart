@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -24,72 +26,70 @@ class _MainViewState extends ConsumerState<MainView> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3, 
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text(Strings.appName),
-          actions: [
-            IconButton(
-              onPressed: () async{
-                // pick video first
-                final videoFile = await ImagePickerHelper.pickVideoFromGallery();
-                if(videoFile == null){
-                  return;
-                }
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text(Strings.appName),
+            actions: [
+              IconButton(
+                  onPressed: () async {
+                    // pick video first
+                    final videoFile =
+                        await ImagePickerHelper.pickVideoFromGallery();
+                    if (videoFile == null) {
+                      return;
+                    }
 
-                // ignore: unused_result
-                ref.refresh(postSettingProvider);
-                
-                // go to the screen to create a new post
-                if(!mounted){
-                  return;
-                }
-                Navigator.push(context, MaterialPageRoute(
-                  builder: ((context) => CreateNewPostView(
-                    fileToPost: videoFile, 
-                    fileType: FileType.video
-                  )
-                )));
-              }, 
-              icon: const FaIcon(FontAwesomeIcons.film)
-            ),
-            IconButton(
-              onPressed: () async{
-                final imageFile = await ImagePickerHelper.pickImageFromGallery();
-                if(imageFile == null){
-                  return;
-                }
+                    // ignore: unused_result
+                    ref.refresh(postSettingProvider);
 
-                // ignore: unused_result
-                ref.refresh(postSettingProvider);
-                
-                // go to the screen to create a new post
-                if(!mounted){
-                  return;
-                }
-                Navigator.push(context, MaterialPageRoute(
-                  builder: ((context) => CreateNewPostView(
-                    fileToPost: imageFile, 
-                    fileType: FileType.image
-                  )
-                )));
-              }, 
-              icon: const Icon(Icons.add_photo_alternate_outlined)
-            ),
-            IconButton(
-              onPressed: () async{
-                final shouldLogout = await LogoutDialog()
-                    .present(context)
-                    .then((value) => value ?? false);
-                if(shouldLogout){
-                  await ref.read(authStateProvider.notifier).logOut();
-                }
-              }, 
-              icon: const Icon(Icons.logout_outlined)
-            ),
-          ],
-          bottom: const TabBar(
-            tabs: [
+                    // go to the screen to create a new post
+                    if (!mounted) {
+                      return;
+                    }
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: ((context) => CreateNewPostView(
+                                fileToPost: videoFile,
+                                fileType: FileType.video))));
+                  },
+                  icon: const FaIcon(FontAwesomeIcons.film)),
+              IconButton(
+                  onPressed: () async {
+                    final imageFile =
+                        await ImagePickerHelper.pickImageFromGallery();
+                    if (imageFile == null) {
+                      return;
+                    }
+
+                    // ignore: unused_result
+                    ref.refresh(postSettingProvider);
+
+                    // go to the screen to create a new post
+                    if (!mounted) {
+                      return;
+                    }
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: ((context) => CreateNewPostView(
+                                fileToPost: imageFile,
+                                fileType: FileType.image))));
+                  },
+                  icon: const Icon(Icons.add_photo_alternate_outlined)),
+              IconButton(
+                  onPressed: () async {
+                    final shouldLogout = await LogoutDialog()
+                        .present(context)
+                        .then((value) => value ?? false);
+                    if (shouldLogout) {
+                      await ref.read(authStateProvider.notifier).logOut();
+                    }
+                  },
+                  icon: const Icon(Icons.logout_outlined)),
+            ],
+            bottom: const TabBar(tabs: [
               Tab(
                 icon: Icon(Icons.person),
               ),
@@ -99,18 +99,10 @@ class _MainViewState extends ConsumerState<MainView> {
               Tab(
                 icon: Icon(Icons.home),
               )
-            ]
+            ]),
           ),
-        ),
-        body: const TabBarView(
-          children: [
-            UserPostsView(),
-            SearchView(),
-            HomeView()
-          ]
-        ),
-        
-      )
-    );
+          body: const TabBarView(
+              children: [UserPostsView(), SearchView(), HomeView()]),
+        ));
   }
 }
