@@ -1,6 +1,5 @@
-enum AuthResult{
+enum AuthResult {
   aborted,
   success,
   failure,
 }
-

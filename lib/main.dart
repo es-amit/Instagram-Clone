@@ -13,48 +13,55 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  // await FirebaseAppCheck.instance.activate();
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(
+    const ProviderScope(
+      child: App(),
+    ),
+  );
 }
 
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class App extends ConsumerWidget {
+  const App({
+    Key? key,
+  }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // calculate widget to show
     return MaterialApp(
-      title: 'Flutter Demo',
       darkTheme: ThemeData(
-          brightness: Brightness.dark,
-          primarySwatch: Colors.blueGrey,
-          indicatorColor: Colors.blueGrey),
-      theme: ThemeData(brightness: Brightness.dark, primarySwatch: Colors.blue),
+        brightness: Brightness.dark,
+        primarySwatch: Colors.blueGrey,
+        indicatorColor: Colors.blueGrey,
+      ),
+      theme: ThemeData(
+        brightness: Brightness.light,
+        primarySwatch: Colors.blue,
+      ),
       themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
       home: Consumer(
-        builder: ((context, ref, child) {
-          LoadingScreen loadingScreen =LoadingScreen.instance();
-
+        builder: (context, ref, child) {
+          // install the loading screen
           ref.listen<bool>(
-            isLoadingProvider, 
-            (_, isLoading) { 
-              if(isLoading){
-                loadingScreen.show(context: context);
+            isLoadingProvider,
+            (_, isLoading) {
+              if (isLoading) {
+                LoadingScreen.instance().show(
+                  context: context,
+                );
+              } else {
+                LoadingScreen.instance().hide();
               }
-              else{
-                loadingScreen.hide();
-              }
-            }
+            },
           );
           final isLoggedIn = ref.watch(isLoggedInProvider);
-          if(isLoggedIn){
+          if (isLoggedIn) {
             return const MainView();
-          }
-          else{
+          } else {
             return const LoginView();
           }
-        })
+        },
       ),
     );
   }

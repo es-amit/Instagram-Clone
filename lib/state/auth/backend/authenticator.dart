@@ -6,21 +6,18 @@ import 'package:instagram_clone/state/auth/constants/constants.dart';
 import 'package:instagram_clone/state/auth/models/auth_result.dart';
 import 'package:instagram_clone/state/posts/typeddefs/user_id.dart';
 
-class Authenticator{
-
+class Authenticator {
   const Authenticator();
 
-  UserId? get userId => FirebaseAuth.instance.currentUser?.uid;
+  // getters
 
   bool get isAlreadyLoggedIn => userId != null;
-
-  String get displayName => FirebaseAuth.instance.currentUser?.displayName ?? "";
-
+  UserId? get userId => FirebaseAuth.instance.currentUser?.uid;
+  String get displayName =>
+      FirebaseAuth.instance.currentUser?.displayName ?? '';
   String? get email => FirebaseAuth.instance.currentUser?.email;
 
-
-  // Sign out function
-  Future<void> logOut() async{
+  Future<void> logOut() async {
     await FirebaseAuth.instance.signOut();
     await GoogleSignIn().signOut();
     await FacebookAuth.instance.logOut();
@@ -42,7 +39,7 @@ class Authenticator{
     } on FirebaseAuthException catch (e) {
       final email = e.email;
       final credential = e.credential;
-      if (e.code == Constants.accountExistsWithDifferentCredential &&
+      if (e.code == Constants.accountExistsWithDifferentCredentialsError &&
           email != null &&
           credential != null) {
         final providers =
@@ -82,5 +79,4 @@ class Authenticator{
       return AuthResult.failure;
     }
   }
-
 }
